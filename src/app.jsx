@@ -7,8 +7,8 @@ export function App() {
 
 	return (
 		<div
-			onMouseOver={() => setMenuOpen(true)}
-			onMouseOut={() => setMenuOpen(false)}
+			onMouseEnter={() => setMenuOpen(true)}
+			onMouseLeave={() => setMenuOpen(false)}
 			style={{
 				width: menuOpen ? "65vw" : "25vh",
 				height: "15vh",
@@ -33,6 +33,7 @@ function PFP({ Open }) {
 			alt="Profile Picture"
 			style={{
 				borderRadius: "50%",
+				zIndex: 999,
 				position: "fixed",
 				top: "50%",
 				left: Open ? "20%" : "50%",
@@ -50,7 +51,7 @@ function TopMenu({ Open }) {
 			style={{
 				transitionDuration: "0.3s",
 				width: "60vw",
-				zIndex: "-100",
+				zIndex: "100",
 				height: Open ? "15vh" : "0vh",
 				position: "fixed",
 				//center the menu vertically
@@ -71,14 +72,14 @@ function TopMenu({ Open }) {
 					height: "100%",
 					alignItems: "center",
 					display: "flex",
-					justifyContent: "space-evenly",
+					justifyContent: "right",
 					opacity: Open ? "1" : "0",
 					transitionDuration: "0.3s",
 				}}
 			>
-				<MenuItem Text="Projects" Color="#f7b2d9" />
-				<MenuItem Text="About" Color="#b2f7e1" />
-				<MenuItem Text="Contact" Color="#b2d9f7" />
+				<MenuItem Text="Projects" Color="#f7b2d9" Icon={"Science"} />
+				<MenuItem Text="About" Color="#b2f7e1" Icon={"Info"} />
+				<MenuItem Text="Contact" Color="#b2d9f7" Icon={"Contacts"} />
 			</div>
 		</div>
 	);
@@ -87,22 +88,41 @@ function TopMenu({ Open }) {
 function MenuItem({ Icon, Text, Color }) {
 	const [hover, setHover] = useState(false);
 
+	//random deg within 15deg
+	const randomDeg = Math.floor(Math.random() * 30) - 15;
+
 	return (
 		<div
+			onMouseEnter={() => setHover(true)}
+			onMouseLeave={() => setHover(false)}
 			style={{
+				transitionDuration: "0.3s",
+				marginLeft: "0.5rem",
+				marginRight: "0.5rem",
 				backgroundColor: Color,
-				width: "30%",
+				minWidth: "10%",
+				width: hover ? "55%" : "30%",
 				height: "85%",
-				color: hover ? "white" : "black",
-				fontSize: hover ? "3em" : "1em",
+				color: hover ? "black" : "gray",
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				transitionDuration: "0.3s",
 				borderRadius: "10px",
 			}}
 		>
-			{Text}
+			<span
+				className="material-symbols-outlined"
+				style={{
+					scale: "300%",
+					marginLeft: "25px",
+					marginRight: "35px",
+					rotate: hover ? `${randomDeg}deg` : "0deg",
+					transitionDuration: "0.3s",
+				}}
+			>
+				{Icon}
+			</span>
+			<h2>{hover ? Text : null}</h2>
 		</div>
 	);
 }
