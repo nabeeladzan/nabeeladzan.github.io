@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import profilePic from "./assets/pfp.png";
+import profilePic from "./assets/pfp_halfres.jpg";
 import "./app.css";
 
 export function App() {
