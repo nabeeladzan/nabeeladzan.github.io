@@ -1,0 +1,4 @@
+git add *
+git commit -a -m "desc"
+git push
+git subtree push --prefix dist origin build

@@ -43,6 +43,7 @@ body {
 h1 {
 	font-size: 3.2em;
 	line-height: 1.1;
+	margin: 0;
 }
 
 .icon-xs {
@@ -102,6 +103,17 @@ button:hover {
 button:focus,
 button:focus-visible {
 	outline: 4px auto -webkit-focus-ring-color;
+}
+
+::-webkit-scrollbar {
+	width: 0.5em;
+}
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 1em;
 }
 
 @media (prefers-color-scheme: light) {

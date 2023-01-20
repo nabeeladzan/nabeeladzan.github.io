@@ -1,9 +1,21 @@
-import { useState } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import profilePic from "./assets/pfp_halfres.jpg";
 import "./app.css";
 
+import About from "./pages/about.jsx";
+import Projects from "./pages/projects.jsx";
+import Contact from "./pages/contact.jsx";
+
 export function App() {
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [activePanel, setActivePanel] = useState("none");
+
+	//handle close panel
+	const ClosePanel = () => {
+		if (!event.target.closest(".panel")) {
+			setActivePanel("none");
+		}
+	};
 
 	return (
 		<div
@@ -20,7 +32,90 @@ export function App() {
 					<PFP Open={menuOpen} />
 				</a>
 			</div>
-			<TopMenu Open={menuOpen} />
+			<TopMenu Open={menuOpen} SetFunction={setActivePanel} />
+			<div>
+				<div
+					style={{
+						position: "fixed",
+						left: "0",
+						bottom: "0",
+						width: "100vw",
+						height: "100vh",
+						zIndex: "999",
+						transitionDuration: "0.3s",
+						//smooth bezier transition
+						backgroundColor:
+							activePanel != "none" ? "rgba(0,0,0,0.5)" : "#FEFEFE",
+						display: activePanel != "none" ? "block" : "none",
+					}}
+					onClick={ClosePanel}
+				></div>
+				<Panel Active={activePanel} />
+			</div>
+		</div>
+	);
+}
+
+function Panel({ Active }) {
+	const [contentVisible, setContentVisible] = useState(false);
+	const [content, setContent] = useState(<div></div>);
+
+	const handleTransitionEnd = (event) => {
+		if (event.propertyName === "height") {
+			setContentVisible(Active !== "none");
+		}
+	};
+
+	useEffect(() => {
+		switch (Active) {
+			case "About":
+				setContent(<About />);
+				break;
+			case "Projects":
+				setContent(<Projects />);
+				break;
+			case "Contact":
+				setContent(<Contact />);
+				break;
+			default:
+				setContent(null);
+				break;
+		}
+	}, [Active]);
+
+	return (
+		<div
+			className="panel"
+			style={{
+				transitionDuration: "0.2s",
+				transitionTimingFunction: "cubic-bezier(0.25, 0.1, 0.25, 1)",
+				position: "absolute",
+				left: "10vw",
+				bottom: "5vh",
+				zIndex: "1000",
+				width: "80vw",
+				height: Active !== "none" ? "90vh" : "0vh",
+				backgroundColor: "whitesmoke",
+				boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.75)",
+				borderRadius: "25px",
+			}}
+			onTransitionEnd={handleTransitionEnd}
+		>
+			<div
+				className="content"
+				style={{
+					display: contentVisible ? "block" : "none",
+					textAlign: "left",
+					padding: "2rem 4rem",
+					overflowY: "scroll",
+					height: "72.5vh",
+					margin: "5vh",
+					boxShadow:
+						"inset 0px 30px 10px -5px rgba(220,220,220,0.75), inset 0px -30px 10px -5px rgba(220,220,220,0.75)",
+				}}
+			>
+				{content}
+			</div>
 		</div>
 	);
 }
@@ -44,7 +139,7 @@ function PFP({ Open }) {
 	);
 }
 
-function TopMenu({ Open }) {
+function TopMenu({ Open, SetFunction }) {
 	return (
 		<div
 			class="top-menu"
@@ -54,12 +149,9 @@ function TopMenu({ Open }) {
 				zIndex: "100",
 				height: Open ? "15vh" : "0vh",
 				position: "fixed",
-				//center the menu vertically
 				top: "50%",
 				left: "25%",
 				transform: "translateY(-50%)",
-
-				//frosted glass effect
 				backdropFilter: "blur(10px)",
 				WebkitBackdropFilter: "blur(10px)",
 				backgroundColor: Open ? "whitesmoke" : "white",
@@ -77,22 +169,43 @@ function TopMenu({ Open }) {
 					transitionDuration: "0.3s",
 				}}
 			>
-				<MenuItem Text="Projects" Color="#f7b2d9" Icon={"Science"} />
-				<MenuItem Text="About" Color="#b2f7e1" Icon={"Info"} />
-				<MenuItem Text="Contact" Color="#b2d9f7" Icon={"Contacts"} />
+				<MenuItem
+					Text="Projects"
+					Color="#f7b2d9"
+					Icon={"Science"}
+					SetFunction={SetFunction}
+				/>
+				<MenuItem
+					Text="About"
+					Color="#b2f7e1"
+					Icon={"Info"}
+					SetFunction={SetFunction}
+				/>
+				<MenuItem
+					Text="Contact"
+					Color="#b2d9f7"
+					Icon={"Contacts"}
+					SetFunction={SetFunction}
+				/>
 			</div>
 		</div>
 	);
 }
 
-function MenuItem({ Icon, Text, Color }) {
+function MenuItem({ Icon, Text, Color, SetFunction }) {
 	const [hover, setHover] = useState(false);
 
 	//random deg within 15deg
 	const randomDeg = Math.floor(Math.random() * 30) - 15;
 
+	//handle click
+	const OnClick = () => {
+		SetFunction(Text);
+	};
+
 	return (
 		<div
+			onClick={OnClick}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}
 			style={{
