@@ -9,4 +9,6 @@ declare global {
   const About: typeof import('./pages/About')['default']
   const App: typeof import('./pages/App')['default']
   const Home: typeof import('./pages/Home')['default']
+  const Projects: typeof import('./pages/Projects')['default']
+  const Socials: typeof import('./pages/Socials')['default']
 }

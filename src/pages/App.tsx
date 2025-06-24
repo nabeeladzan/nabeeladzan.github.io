@@ -13,7 +13,7 @@ const commands = [
     // page commands
     "home",
     "about",
-    "contact",
+    "socials",
     "projects",
 
     // socials
@@ -125,14 +125,16 @@ export default function App(props: {
                 props.router.navigate("/about");
                 break;
 
-            case "contact":
-                addLineToHistory("Navigating to Contact page...");
-                // Logic to navigate to Contact page
+            case "socials":
+                addLineToHistory("Navigating to Socials page...");
+                // Logic to navigate to Socials page
+                props.router.navigate("/socials");
                 break;
 
             case "projects":
                 addLineToHistory("Navigating to Projects page...");
                 // Logic to navigate to Projects page
+                props.router.navigate("/projects");
                 break;
 
             case "github":
@@ -161,10 +163,31 @@ export default function App(props: {
         }
     }
 
+    function NavButton({ path, label }: { path: string; label: string }) {
+        // split label
+
+        return (
+            <button
+                onClick={() => props.router.navigate(path)}
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+                <span className="text-xl/5 bg-gradient-to-r from-blue-400 to-sky-600 z-10 text-transparent bg-clip-text">
+                    {label}
+                </span>
+            </button>
+        );
+    }
+
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+            <div className="absolute top-0 left-0 flex gap-4 px-4 py-2 justify-evenly w-full sm:justify-start z-20">
+                    <NavButton path="/" label="home" />
+                    <NavButton path="/about" label="about" />
+                    <NavButton path="/projects" label="projects" />
+                    <NavButton path="/socials" label="socials" />
+            </div>
             <div className="flex h-full flex-grow w-full">
-                <div className="absolute flex flex-col items-start p-1 pr-2 drop-shadow-2xl rounded-r-md justify-end bottom-[2.25em] w-min bg-white z-10">
+                <div className="absolute invisible sm:visible flex flex-col items-start p-1 pr-2 drop-shadow-2xl rounded-r-md justify-end bottom-[2.25em] w-min bg-white z-10">
                     {
                         // only one and perfect match dont show search results
                         searchResults.length === 1 && searchResults[0].toLowerCase() === terminalInput.toLowerCase() ? null :
@@ -183,7 +206,7 @@ export default function App(props: {
                         ))
                     }
                 </div>
-                <div className="absolute flex flex-col items-start p-2 justify-end bottom-[2.25em] w-full h-full bg-transparent">
+                <div className="absolute flex invisible sm:visible flex-col items-start p-2 justify-end bottom-[2.25em] w-full h-full bg-transparent">
                     {
                         terminalHistory.map((command, index) => (
                             <span key={index} className="text-gray-600 text-md"
@@ -207,7 +230,7 @@ export default function App(props: {
                 value={terminalInput}
                 onChange={(e) => setTerminalInput(e.target.value)}
                 placeholder="Type your command here..."
-                className="border-none border-t-gray-00 outline-0 rounded-none p-2 w-full"
+                className="border-none invisible sm:visible border-t-gray-00 outline-0 rounded-none p-2 w-full"
                 autoFocus // 3. Automatically focus this input when the component mounts
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {

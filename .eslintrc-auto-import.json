@@ -3,6 +3,8 @@
     "Hello": true,
     "Home": true,
     "App": true,
-    "About": true
+    "About": true,
+    "Projects": true,
+    "Socials": true
   }
 }
