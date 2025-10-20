@@ -1,0 +1,5 @@
+
+name: "Infiniplace"
+description: "Infinite Canvas Webapp"
+long_description: "r/place inspired app that has an infinite canvas. Powered with React, NestJS, Postgres, and Valkey"
+url: "https://infiniplace.nabeeladzan.dev"

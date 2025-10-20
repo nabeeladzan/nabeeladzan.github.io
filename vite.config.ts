@@ -33,5 +33,12 @@ export default defineConfig({
             '@stores': path.resolve(__dirname, './src/stores'),
             '@powertrains': path.resolve(__dirname, './powertrains'),
         }
+    },
+    server: {
+        host: true,
+        port: 4060,
+	allowedHosts: [
+		'nabeeladzan.dev',
+	],
     }
 })

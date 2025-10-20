@@ -1,7 +1,10 @@
+import {TypingAnimation} from "@components/TypingAnimation.tsx";
+
 // Your App.tsx file
 import {useState, useRef, useEffect, type ReactNode} from "react";
 import {useTerminalHistoryStore} from "@stores/TerminalHistoryStore.ts";
-import {BrowserRouter} from "react-router";
+import {useTheme} from "@components/ThemeProvider.tsx";
+import {Moon, Sun} from "lucide-react";
 
 const commands = [
     "help",
@@ -9,6 +12,9 @@ const commands = [
     "exit",
     "version",
     "status",
+    "theme",
+    "ls",
+    "cat",
 
     // page commands
     "home",
@@ -23,11 +29,14 @@ const commands = [
     "instagram",
 ]
 
+const pages = ["home", "about", "projects", "socials"];
+
 export default function App(props: {
     children?: ReactNode;
     router: {navigate: (path: string) => void;}; // <-- 1. Accept the router prop
 }) {
     const browser = navigator.userAgent.toLowerCase();
+    const {setTheme, theme} = useTheme();
 
     const [terminalInput, setTerminalInput] = useState("");
     const {terminalHistory, addLineToHistory, clearHistory} = useTerminalHistoryStore();
@@ -74,7 +83,8 @@ export default function App(props: {
     }
 
     function handleCommandExecution(command: string) {
-        switch (command) {
+        const [cmd, ...args] = command.split(" ");
+        switch (cmd) {
             case "help":
                 command = "Available commands: " + commands.join(", ");
                 addLineToHistory(command);
@@ -156,6 +166,26 @@ export default function App(props: {
                 addLineToHistory("Opening Instagram profile...");
                 window.open("https://instagram.com/nabeel_adzan", "_blank");
                 break;
+            case "theme":
+                const newTheme = args[0];
+                if (newTheme === "dark" || newTheme === "light" || newTheme === "system") {
+                    setTheme(newTheme);
+                    addLineToHistory(`Theme set to ${newTheme}`);
+                } else {
+                    addLineToHistory("Invalid theme. Available themes: dark, light, system");
+                }
+                break;
+            case "ls":
+                addLineToHistory(pages.join("  "));
+                break;
+            case "cat":
+                const page = args[0];
+                if (pages.includes(page)) {
+                    props.router.navigate(`/${page}`);
+                } else {
+                    addLineToHistory(`cat: ${page}: No such file or directory`);
+                }
+                break;
 
 
             default:
@@ -179,20 +209,25 @@ export default function App(props: {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-            <div className="absolute top-0 left-0 flex gap-4 px-4 py-2 justify-evenly w-full sm:justify-start z-20">
+        <div className="flex flex-col items-center justify-center h-screen bg-background text-foreground">
+            <div className="absolute top-0 left-0 flex gap-4 px-4 py-2 justify-evenly w-full sm:justify-start z-30">
                     <NavButton path="/" label="home" />
                     <NavButton path="/about" label="about" />
                     <NavButton path="/projects" label="projects" />
                     <NavButton path="/socials" label="socials" />
             </div>
+            <div className="absolute top-0 right-0 p-2 z-30">
+                <button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                    {theme === "dark" ? <Sun/> : <Moon/>}
+                </button>
+            </div>
             <div className="flex h-full flex-grow w-full">
-                <div className="absolute invisible sm:visible flex flex-col items-start p-1 pr-2 drop-shadow-2xl rounded-r-md justify-end bottom-[2.25em] w-min bg-white z-10">
+                <div className="absolute invisible sm:visible flex flex-col items-start p-1 pr-2 drop-shadow-2xl rounded-r-md justify-end bottom-[2.25em] w-min bg-card z-10">
                     {
                         // only one and perfect match dont show search results
                         searchResults.length === 1 && searchResults[0].toLowerCase() === terminalInput.toLowerCase() ? null :
                         searchResults.map((command, index) => (
-                            <span key={index} className="text-gray-600 text-md"
+                            <span key={index} className="text-muted-foreground text-md"
                                 style={{
                                     color: searchCursor === index ? "black" : "gray",
                                     backgroundColor: searchCursor === index ? "#e0e0e0" : "transparent",
@@ -209,13 +244,13 @@ export default function App(props: {
                 <div className="absolute flex invisible sm:visible flex-col items-start p-2 justify-end bottom-[2.25em] w-full h-full bg-transparent">
                     {
                         terminalHistory.map((command, index) => (
-                            <span key={index} className="text-gray-600 text-md"
+                            <span key={index} className="text-muted-foreground text-md"
                                 style={{
                                     // opacity at last its 1 by 10 its 0
                                     opacity: 1 - (terminalHistory.length - index) / 8,
                                 }}
                             >
-                                {command}
+                                {index === terminalHistory.length - 1 ? <TypingAnimation text={command} /> : command}
                             </span>
                         ))
                     }
@@ -230,7 +265,7 @@ export default function App(props: {
                 value={terminalInput}
                 onChange={(e) => setTerminalInput(e.target.value)}
                 placeholder="Type your command here..."
-                className="border-none invisible sm:visible border-t-gray-00 outline-0 rounded-none p-2 w-full"
+                className="border-none invisible sm:visible bg-background border-t-gray-00 outline-0 rounded-none p-2 w-full text-foreground"
                 autoFocus // 3. Automatically focus this input when the component mounts
                 onKeyDown={(e) => {
                     if (e.key === "Enter") {

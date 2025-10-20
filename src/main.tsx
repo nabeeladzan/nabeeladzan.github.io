@@ -2,6 +2,7 @@ import {StrictMode} from 'react'
 import {createRoot} from 'react-dom/client'
 import '@/index.css'
 import {createBrowserRouter, RouterProvider} from "react-router";
+import {ThemeProvider} from "@components/ThemeProvider.tsx";
 
 // No need to import pages, they are automatically imported from the pages directory
 const router = createBrowserRouter([
@@ -13,8 +14,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
-        <App router={router}>
-            <RouterProvider router={router}/>
-        </App>
+        <ThemeProvider>
+            <App router={router}>
+                <RouterProvider router={router}/>
+            </App>
+        </ThemeProvider>
     </StrictMode>,
 )
