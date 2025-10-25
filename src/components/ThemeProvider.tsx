@@ -1,7 +1,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react"
 
-type Theme = "dark" | "light" | "system"
+export type Theme = "dark" | "light" | "system"
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -27,11 +27,17 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  )
+  const isBrowser = typeof window !== "undefined"
+
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (!isBrowser) return defaultTheme
+    const stored = window.localStorage.getItem(storageKey)
+    return (stored as Theme | null) ?? defaultTheme
+  })
 
   useEffect(() => {
+    if (!isBrowser) return
+
     const root = window.document.documentElement
 
     root.classList.remove("light", "dark")
@@ -47,13 +53,15 @@ export function ThemeProvider({
     }
 
     root.classList.add(theme)
-  }, [theme])
+  }, [isBrowser, theme])
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
-      setTheme(theme)
+    setTheme: (newTheme: Theme) => {
+      if (isBrowser) {
+        window.localStorage.setItem(storageKey, newTheme)
+      }
+      setThemeState(newTheme)
     },
   }
 

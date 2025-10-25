@@ -5,7 +5,7 @@ import {GithubIcon, InstagramIcon, LinkedinIcon, TwitterIcon} from "lucide-react
 const socials = [
     {
         name: "GitHub",
-        url: "https;://github.com/nabeeladzan",
+        url: "https://github.com/nabeeladzan",
         icon: GithubIcon,
         color: "#181717", // GitHub's brand color
     },

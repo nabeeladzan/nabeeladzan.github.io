@@ -1,9 +1,9 @@
 {
   "globals": {
-    "Hello": true,
-    "Home": true,
-    "App": true,
     "About": true,
+    "App": true,
+    "AppProps": true,
+    "Home": true,
     "Projects": true,
     "Socials": true
   }

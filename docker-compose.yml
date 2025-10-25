@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Run processes with the same uid/gid as the host user so generated files
+    # remain writable when the repo is bind-mounted into the container.
+    user: "${UID}:${GID}"
+    # Mount the project into the container so local file edits are visible to Vite.
+    # Keep node_modules from the image by mounting an anonymous volume at /app/node_modules.
+    volumes:
+      - ./:/app:cached
+      - /app/node_modules
+    # Map Vite default dev port to the host so the dev server is reachable from your browser.
+    ports:
+      - "5173:5173"
+    environment:
+      # Force file watching with polling where required (helpful on some host OS / Docker setups)
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+      - PORT=5173
+      - NODE_ENV=development
+    # Ensure Vite binds to 0.0.0.0 so it is reachable from your host machine.
+    command: ["sh", "-c", "npm run dev -- --host 0.0.0.0 --port 5173"]
+    # Provide access to host networking alias (handy for resolving host.docker.internal on Linux)
+    # Requires Docker Engine that supports host-gateway; remove if unsupported.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # Don't restart automatically by default for dev; comment/uncomment as you prefer.
+    restart: "no"

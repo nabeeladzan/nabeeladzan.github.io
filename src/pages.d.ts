@@ -12,3 +12,9 @@ declare global {
   const Projects: typeof import('./pages/Projects')['default']
   const Socials: typeof import('./pages/Socials')['default']
 }
+// for type re-export
+declare global {
+  // @ts-ignore
+  export type { AppProps } from './pages/App'
+  import('./pages/App')
+}

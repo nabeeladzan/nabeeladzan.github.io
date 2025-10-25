@@ -80,6 +80,15 @@ git --work-tree=/root/projects/nabeeladzan.github.io --git-dir=/root/projects/na
 sudo systemctl restart vite-dev-server.service
 ```
 
+## Project Structure
+
+- `src/app/` – shared application scaffolding (route definitions, future app-level helpers).
+- `src/features/terminal/` – terminal shell UI, command registry, and state wiring used to wrap all pages.
+- `src/components/` – reusable UI primitives and layout helpers.
+- `src/pages/` – routed page content (auto-imported in `main.tsx`).
+- `src/stores/` – Zustand stores used across the app (`TerminalHistoryStore`).
+- `projects/` – YAML definitions that power the Projects page.
+
 Make sure to make the hook executable:
 
 ```bash
